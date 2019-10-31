@@ -26,10 +26,27 @@ const styles = theme => ({
 })
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      customers: '',
+      completed: 0
+    }
+  }
 
-  state = {
-    customers: "",
-    completed: 0 
+  stateRefresh = () => {
+    this.setState({
+      customers: '',
+      completed: 0
+    });
+    this.callApi()
+    .then(res => {
+      console.log(res);
+      return (this.setState({
+        customers: res
+      }));
+    })
+    .catch(e => console.log(e));
   }
 
   componentDidMount() {
@@ -71,6 +88,7 @@ class App extends React.Component {
                 <TableCell>생년월일</TableCell>
                 <TableCell>성별</TableCell>
                 <TableCell>직업</TableCell>
+                <TableCell>設定</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -83,6 +101,7 @@ class App extends React.Component {
                 birthday={v.birthday}
                 gender={v.gender}
                 job={v.job}
+                stateRefresh={this.stateRefresh}
               />
             ) : 
               <TableRow>
@@ -94,14 +113,12 @@ class App extends React.Component {
             </TableBody>
           </Table>
         </Paper>
-        <CustomerAdd />
+        <CustomerAdd stateRefresh={this.stateRefresh}/>
       </div>
     );
   
   }
 
 }
-
-
 
 export default withStyles(styles)(App) ;
