@@ -97,7 +97,7 @@ class CustomerAdd extends React.Component {
     return (
       <div>
         <Button variant='contained' color='primary' onClick={this.handleClickOpen} >
-          お逆さま追加
+          お客様追加
         </Button>
         <Dialog open={this.state.open} onCloe={this.handelClose} >
           <DialogTitle>追加</DialogTitle>
