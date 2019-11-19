@@ -1,237 +1,248 @@
 import React from 'react';
-import Customer from './components/Customer';
-import CustomerAdd from './components/CustomerAdd';
-
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Drawer from '@material-ui/core/Drawer';
+import Box from '@material-ui/core/Box';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import List from '@material-ui/core/List';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import Link from '@material-ui/core/Link';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import { mainListItems, secondaryListItems } from './components/MainList';
+
 import TableHead from '@material-ui/core/TableHead';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { withStyles } from '@material-ui/core/styles';
 
-//appbar 関連
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
-import { fade } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
+import Customer from './components/Customer';
 
-const styles = theme => ({
-  root:{
-    width: '100%',
-    marginWidth: 1000
-  },
-  menu:{
-    marginTop: 15,
-    marginBottom: 15,
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Your Website
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
+const drawerWidth = 240;
+
+const useStyles = makeStyles(theme => ({
+  root: {
     display: 'flex',
-    justifyContent: 'center'
   },
-  paper: {
-    marginLeft: 18,
-    marginRight: 28
+  toolbar: {
+    paddingRight: 24, // keep right padding when drawer closed
   },
-  progress: {
-    margin: theme.spacing(2)
+  toolbarIcon: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '0 8px',
+    ...theme.mixins.toolbar,
   },
-  tableHead:{
-    fontSize: '1.0rem'
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   menuButton: {
-    marginRight: theme.spacing(2),
+    marginRight: 36,
+  },
+  menuButtonHidden: {
+    display: 'none',
   },
   title: {
     flexGrow: 1,
-    display: 'none',
-    [theme.breakpoints.up('sm')]: {
-      display: 'block',
-    },
   },
-  search: {
+  drawerPaper: {
     position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(1),
-      width: 'auto',
-    },
+    whiteSpace: 'nowrap',
+    width: drawerWidth,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
-  searchIcon: {
+  drawerPaperClose: {
+    overflowX: 'hidden',
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
     width: theme.spacing(7),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 7),
-    transition: theme.transitions.create('width'),
-    width: '100%',
     [theme.breakpoints.up('sm')]: {
-      width: 120,
-      '&:focus': {
-        width: 200,
-      },
+      width: theme.spacing(9),
     },
-  }
-})
+  },
+  appBarSpacer: theme.mixins.toolbar,
+  content: {
+    flexGrow: 1,
+    height: '100vh',
+    overflow: 'auto',
+  },
+  container: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+  },
+  paper: {
+    padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  },
+  fixedHeight: {
+    height: 240,
+  },
+}));
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      customers: '',
-      completed: 0,
-      searchKeyword: ''
-    }
-  }
+export default function Dashboard() {
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(true);
+  const [customers, setCustomers] = React.useState('');
+  const [completed, setCompleted] = React.useState(0);
 
-  stateRefresh = () => {
-    this.setState({
-      customers: '',
-      completed: 0,
-      searchKeyword: ''
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  const cellList = ['番号','プロフィール画像','お名前','お誕生日','性別','職業','設定'];
+
+  const filteredComponents = (data) => {
+    data = data.filter(v => {
+      return v.name.indexOf(this.state.searchKeyword) > -1;
     });
-    this.callApi()
-    .then(res => {
-      console.log(res);
-      return (this.setState({
-        customers: res
-      }));
-    })
-    .catch(e => console.log(e));
-  }
-
-  componentDidMount() {
-    this.timer = setInterval(this.progress, 20);
-    this.callApi()
-    .then(res => {
-      console.log(res);
-      return (this.setState({
-        customers: res
-      }));
-    })
-    .catch(e => console.log(e));
-  }
-
-  callApi = async() => {
-    const response = await fetch('/api/customers');
-    const data = response.json(); 
-    return data;
-  }
-
-  progress = () => {
-    const { completed } = this.state;
-    this.setState({
-      completed: completed>= 100 ? 0 : completed +1
+    return data.map(c => {
+      return (
+        <Customer 
+          key={c.id}
+          id={c.id}
+          image={c.image}
+          name={c.name}
+          birthday={c.birthday}
+          gender={c.gender}
+          job={c.job}
+          stateRefresh={this.stateRefresh}
+        />
+      );
     });
   }
 
-  handleValueChange = (e) => {
-    let nextState = {};
-    nextState[e.target.name] = e.target.value;
-    this.setState(nextState);
-  }
-
-  render() {
-    const filteredComponents = (data) => {
-      data = data.filter(v => {
-        return v.name.indexOf(this.state.searchKeyword) > -1;
-      });
-      return data.map(c => {
-        return (
-          <Customer 
-            key={c.id}
-            id={c.id}
-            image={c.image}
-            name={c.name}
-            birthday={c.birthday}
-            gender={c.gender}
-            job={c.job}
-            stateRefresh={this.stateRefresh}
-          />
-        );
-      });
-    }
-
-
-    const { classes } = this.props;
-    const cellList = ['番号','プロフィール画像','お名前','お誕生日','性別','職業','設定'];
-    return (
-      <div className={classes.root}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              edge="start"
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="open drawer"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography className={classes.title} variant="h6" noWrap>
-              管理システム
-            </Typography>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
-              </div>
-              <InputBase
-                placeholder="検索…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ 'aria-label': 'search' }}
-                name="searchKeyword"
-                value={this.state.searchKeyword}
-                onChange={this.handleValueChange}
-              />
-            </div>
-          </Toolbar>
-        </AppBar>
-        <div className={classes.menu}>
-          <CustomerAdd stateRefresh={this.stateRefresh}/>
+  return (
+    <div className={classes.root}>
+      <CssBaseline />
+      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+        <Toolbar className={classes.toolbar}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+            Dashboard
+          </Typography>
+          <IconButton color="inherit">
+            <Badge badgeContent={4} color="secondary">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant="permanent"
+        classes={{
+          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+        }}
+        open={open}
+      >
+        <div className={classes.toolbarIcon}>
+          <IconButton onClick={handleDrawerClose}>
+            <ChevronLeftIcon />
+          </IconButton>
         </div>
-        <Paper className={classes.paper}>
-          <Table  className={classes.table}>
-            <TableHead>
-              <TableRow>
-                {cellList.map(v => <TableCell>{v}</TableCell>)}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-            { this.state.customers ? 
-              filteredComponents(this.state.customers) : 
-              <TableRow>
-                <TableCell colSpan='6' align='center'>
-                  <CircularProgress className={classes.progress} variant="determinate" value={this.state.completed} />
-                </TableCell>
-              </TableRow>
-            }
-            </TableBody>
-          </Table>
-        </Paper>
-      </div>
-    );
-  
-  }
+        <Divider />
+        <List>{mainListItems}</List>
+        <Divider />
+        <List>{secondaryListItems}</List>
+      </Drawer>
+      <main className={classes.content}>
+        <div className={classes.appBarSpacer} />
+        <Container maxWidth="lg" className={classes.container}>
+          <Grid container spacing={3}>
+            {/* Chart */}
+            <Grid item xs={12} md={8} lg={9}>
+              <Paper className={fixedHeightPaper}>
+              <Table  className={classes.table}>
+                <TableHead>
+                  <TableRow>
+                    {cellList.map(v => <TableCell>{v}</TableCell>)}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                { customers ? 
+                  filteredComponents(customers) : 
+                  <TableRow>
+                    <TableCell colSpan='6' align='center'>
+                      <CircularProgress className={classes.progress} variant="determinate" value={completed} />
+                    </TableCell>
+                  </TableRow>
+                }
+                </TableBody>
+              </Table>
+              </Paper>
+            </Grid>
+            {/* Recent Deposits */}
+            <Grid item xs={12} md={4} lg={3}>
+              <Paper className={fixedHeightPaper}>
 
+              </Paper>
+            </Grid>
+            {/* Recent Orders */}
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+
+              </Paper>
+            </Grid>
+          </Grid>
+          <Box pt={4}>
+            <Copyright />
+          </Box>
+        </Container>
+      </main>
+    </div>
+  );
 }
-
-export default withStyles(styles)(App) ;

@@ -11,6 +11,8 @@
 # production
 /build
 
+/src/App_bk.js
+
 # misc
 .DS_Store
 .env.local
