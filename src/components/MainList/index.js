@@ -7,12 +7,17 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import PeopleIcon from '@material-ui/icons/People';
 import BarChartIcon from '@material-ui/icons/BarChart';
-import LayersIcon from '@material-ui/icons/Layers';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import GroupItem from '../GroupItem'
 
 export const mainListItems = (
   <div>
-    <ListItem button>
+    <ListItem 
+      button
+      key="Dashboard"
+      component={GroupItem} 
+      to="/dashboard"
+    >
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>

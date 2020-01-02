@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -123,11 +123,25 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Dashboard() {
+const App = () => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [customers, setCustomers] = React.useState('');
   const [completed, setCompleted] = React.useState(0);
+  
+  useEffect(()=>{
+    callApi()
+    .then(res => {
+      console.log(res);
+      return setCustomers(res);
+    })
+  });
+  
+  const callApi = async () => {
+    const response = await fetch('/api/customers');
+    const data = response.json(); 
+    return data;
+  }
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -139,9 +153,9 @@ export default function Dashboard() {
   const cellList = ['番号','プロフィール画像','お名前','お誕生日','性別','職業','設定'];
 
   const filteredComponents = (data) => {
-    data = data.filter(v => {
-      return v.name.indexOf(this.state.searchKeyword) > -1;
-    });
+    // data = data.filter(v => {
+    //   return v.name.indexOf(this.state.searchKeyword) > -1;
+    // });
     return data.map(c => {
       return (
         <Customer 
@@ -152,7 +166,7 @@ export default function Dashboard() {
           birthday={c.birthday}
           gender={c.gender}
           job={c.job}
-          stateRefresh={this.stateRefresh}
+          // stateRefresh={this.stateRefresh}
         />
       );
     });
@@ -204,7 +218,7 @@ export default function Dashboard() {
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
             {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
+            <Grid item xs={12} md={12} lg={12}>
               <Paper className={fixedHeightPaper}>
               <Table  className={classes.table}>
                 <TableHead>
@@ -226,13 +240,13 @@ export default function Dashboard() {
               </Paper>
             </Grid>
             {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
+            <Grid item xs={12} md={6} lg={6}>
               <Paper className={fixedHeightPaper}>
 
               </Paper>
             </Grid>
             {/* Recent Orders */}
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6} lg={6}>
               <Paper className={classes.paper}>
 
               </Paper>
@@ -246,3 +260,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+export default App;
